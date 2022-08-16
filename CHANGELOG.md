@@ -1,6 +1,10 @@
 ## Change Log
 
-### 0.1.0 (2022/08/16 12:29 +00:00)
+### 0.2.0 (2022/08/16 18:04 +00:00)
+- [bb4ce64](https://github.com/clemb8/client-sf-bulk2/commit/bb4ce6416b68286c0d4b8966b26d0d7198a0b1d0) Add query waitforResult method (@clemb8)
+
+### v0.1.0 (2022/08/16 12:29 +00:00)
+- [bd31e99](https://github.com/clemb8/client-sf-bulk2/commit/bd31e9925506de4091fd8712a261187f3b2ead0d) 0.1.0 (@clemb8)
 - [46c7376](https://github.com/clemb8/client-sf-bulk2/commit/46c737654e86fb5e90c8350410f869732931fc80) add default branch (@clemb8)
 - [88f2ad7](https://github.com/clemb8/client-sf-bulk2/commit/88f2ad75fff960c2dbe2c64eb52f2f14b8a04786) add repository (@clemb8)
 - [0abf89f](https://github.com/clemb8/client-sf-bulk2/commit/0abf89ff552357aefeed47eb25d040e26366256b) add owner (@clemb8)
