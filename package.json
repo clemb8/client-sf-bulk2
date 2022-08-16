@@ -7,8 +7,10 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "generate-changelog": "github-changes -n ${npm_package_version} --use-commit-body",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "version": "npm run generate-changelog && git add CHANGELOG.md",
     "postversion": "git push && git push --tags"
   },
   "author": "clemb8",
