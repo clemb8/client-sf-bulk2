@@ -1,15 +1,15 @@
 {
   "name": "client-sf-bulk2",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A client for the Salesforce bulk API V2",
   "main": "dist/index.js",
   "scripts": {
-    "prepare" : "npm run build",
-    "prepublishOnly" : "npm run lint",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint",
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postversion" : "git push && git push --tags"
+    "postversion": "git push && git push --tags"
   },
   "author": "clemb8",
   "license": "MIT",
