@@ -10,7 +10,7 @@ import { QueryInput } from "./interfaces/QueryInput";
 import { QueryResponse } from "./interfaces/QueryResponse";
 import { RequestConfig } from "./interfaces/RequestConfig";
 import { requestAbortBulkQueryJob, requestGetAllBulkQueryJobInfo, requestGetBulkQueryJobInfo, requestGetBulkQueryResults, requestSubmitBulkQueryJob } from "./query/query";
-
+import { handleQueryNotComplete } from "./query/utils";
 
 export default class BulkAPI {
 
@@ -47,6 +47,21 @@ export default class BulkAPI {
     return requestConfig;
   }
 
+  private async getAllQueryResults(jobId: string): Promise<string> {
+    let data: string = '';
+    const result = await this.getBulkQueryResults(jobId);
+    data = result.data;
+    if (result.headers['sforce-locator']) {
+      let locator = result.headers['sforce-locator'];
+      while (locator) {
+        const followingResult = await this.getBulkQueryResults(jobId, locator);
+        data += followingResult.data;
+        locator = followingResult.headers['sforce-locator'];
+      }
+    }
+    return data;
+  }
+
   public async submitBulkQueryJob(query: QueryInput): Promise<QueryResponse> {
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', this.endpointQuery);
     return await requestSubmitBulkQueryJob(query, requestConfig);
@@ -73,6 +88,29 @@ export default class BulkAPI {
     const endpoint = `${this.endpointQuery}/${jobId}/results`;
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
     return await requestGetBulkQueryResults(requestConfig, locator, maxRecords);
+  }
+
+  public async waitBulkQueryEnd(jobId: string, delay?: number): Promise<string> {
+    delay ? delay : delay = 3000;
+    return new Promise((resolve) => {
+      const interval = setInterval(async () => {
+        const result = await this.getBulkQueryJob(jobId);
+        if (result.state !== 'UploadComplete' && result.state !== 'InProgress') {
+          clearInterval(interval);
+          resolve(result.state);
+        }
+      }, delay);
+    })
+  }
+
+  public async getBulkQueryFinalResults(jobId: string, delay?: number) {
+    const jobFinalState = await this.waitBulkQueryEnd(jobId, delay);
+    if (jobFinalState === 'JobComplete') {
+      const result = await this.getAllQueryResults(jobId);
+      return result;
+    } else {
+      handleQueryNotComplete(jobFinalState);
+    }
   }
 
   public async createDataUploadJob(jobUploadRequest: JobUploadRequest): Promise<JobUploadResponse> {

@@ -27,3 +27,13 @@ export function includeParametersQueryResults(endpoint: string, locator: string 
 
   return endpoint;
 }
+
+export function handleQueryNotComplete(jobFinalState: string) {
+  if(jobFinalState === 'Aborted') {
+    throw 'The query has been aborted';
+  } else if (jobFinalState === 'Failed') {
+    throw 'The query failed';
+  } else {
+    throw 'Something went wrong while getting query information';
+  }
+}
