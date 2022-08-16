@@ -7,7 +7,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "generate-changelog": "github-changes -n ${npm_package_version} --use-commit-body -o clemb8",
+    "generate-changelog": "github-changes -n ${npm_package_version} --use-commit-body -o clemb8 -r client-sf-bulk2",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "version": "npm run generate-changelog && git add CHANGELOG.md",
