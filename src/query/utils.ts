@@ -30,10 +30,10 @@ export function includeParametersQueryResults(endpoint: string, locator: string 
 
 export function handleQueryNotComplete(jobFinalState: string) {
   if(jobFinalState === 'Aborted') {
-    throw 'The query has been aborted';
+    throw new Error('The query has been aborted');
   } else if (jobFinalState === 'Failed') {
-    throw 'The query failed';
+    throw new Error('The query failed');
   } else {
-    throw 'Something went wrong while getting query information';
+    throw new Error('Something went wrong while getting query information');
   }
 }

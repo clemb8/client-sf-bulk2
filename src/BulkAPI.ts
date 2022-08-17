@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosResponse, AxiosResponseHeaders } from "axios";
 import { requestJobAbort, requestCreateJob, requestJobStart, requestJobUploadData, requestGetJobInfo, requestGetJobResults } from "./ingest/ingest";
 import { AllQueryJobsInfoResponse } from "./interfaces/AllQueryJobsInfoResponse";
 import { JobInfoResponse } from "./interfaces/JobInfoResponse";
@@ -11,7 +11,7 @@ import { QueryResponse } from "./interfaces/QueryResponse";
 import { RequestConfig } from "./interfaces/RequestConfig";
 import { requestAbortBulkQueryJob, requestGetAllBulkQueryJobInfo, requestGetBulkQueryJobInfo, requestGetBulkQueryResults, requestSubmitBulkQueryJob } from "./query/query";
 import { handleQueryNotComplete } from "./query/utils";
-import { createAxiosHeader, iterateThroughResults } from "./utils";
+import { createAxiosHeader } from "./utils";
 
 export default class BulkAPI {
 
@@ -35,11 +35,22 @@ export default class BulkAPI {
     return requestConfig;
   }
 
+  private async iterateThroughResults(headers: AxiosResponseHeaders, jobId: string): Promise<string> {
+    let restData = '';
+    let locator = headers['sforce-locator'];
+    while (locator) {
+      const followingResult = await this.getBulkQueryResults(jobId, locator);
+      restData += followingResult.data;
+      locator = followingResult.headers['sforce-locator'];
+    }
+    return restData;
+  }
+
   private async getAllQueryResults(jobId: string): Promise<string> {
     let data: string = '';
     const result = await this.getBulkQueryResults(jobId);
     data = result.data;
-    result.headers['sforce-locator'] ? data += iterateThroughResults(result.headers, this.getBulkQueryResults, jobId) : data;
+    if(result.headers['sforce-locator'] !== 'null') data += await this.iterateThroughResults(result.headers, jobId);
     return data;
   }
 
@@ -72,7 +83,7 @@ export default class BulkAPI {
   }
 
   public async waitBulkQueryEnd(jobId: string, delay?: number): Promise<string> {
-    delay ? delay : delay = 3000;
+    if(!delay) delay = 3000;
     return new Promise((resolve) => {
       const interval = setInterval(async () => {
         const result = await this.getBulkQueryJob(jobId);

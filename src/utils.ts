@@ -1,6 +1,6 @@
-import { AxiosRequestConfig, AxiosResponseHeaders } from "axios";
+import { AxiosRequestConfig } from "axios";
 
-export function createAxiosHeader(contentType: string, connection: string, accept: string) {
+export function createAxiosHeader(contentType: string, accept: string, connection: string) {
   const headers = {
     'Content-Type': contentType,
     Authorization: 'Bearer ' + connection,
@@ -13,15 +13,4 @@ export function createAxiosHeader(contentType: string, connection: string, accep
   }
 
   return axiosRequestConfig;
-}
-
-export async function iterateThroughResults(headers: AxiosResponseHeaders, getMoreResult: any, jobId: string): Promise<string> {
-  let restData = '';
-  let locator = headers['sforce-locator'];
-  while (locator) {
-    const followingResult = await getMoreResult(jobId, locator);
-    restData += followingResult.data;
-    locator = followingResult.headers['sforce-locator'];
-  }
-  return restData;
 }
