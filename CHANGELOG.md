@@ -1,6 +1,11 @@
 ## Change Log
 
-### 0.2.0 (2022/08/16 18:04 +00:00)
+### 0.2.1 (2022/08/17 15:45 +00:00)
+- [bf418ec](https://github.com/clemb8/client-sf-bulk2/commit/bf418ecd2244e0a50b77978df42c8a9e40cc9520) fixing iterateThroughresult (@clemb8)
+- [27763ff](https://github.com/clemb8/client-sf-bulk2/commit/27763ffd8a950e8092c9f39e9a54c4595700a609) Refactor class (@clemb8)
+
+### v0.2.0 (2022/08/16 18:04 +00:00)
+- [31849bf](https://github.com/clemb8/client-sf-bulk2/commit/31849bf48c9391770417f700a228c72a301b5e6a) 0.2.0 (@clemb8)
 - [bb4ce64](https://github.com/clemb8/client-sf-bulk2/commit/bb4ce6416b68286c0d4b8966b26d0d7198a0b1d0) Add query waitforResult method (@clemb8)
 
 ### v0.1.0 (2022/08/16 12:29 +00:00)
