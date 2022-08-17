@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { requestJobAbort, requestCreateJob, requestJobStart, requestJobUploadData, requestGetJobInfo, requestGetJobResults } from "./ingest/ingest";
 import { AllQueryJobsInfoResponse } from "./interfaces/AllQueryJobsInfoResponse";
 import { JobInfoResponse } from "./interfaces/JobInfoResponse";
@@ -11,6 +11,7 @@ import { QueryResponse } from "./interfaces/QueryResponse";
 import { RequestConfig } from "./interfaces/RequestConfig";
 import { requestAbortBulkQueryJob, requestGetAllBulkQueryJobInfo, requestGetBulkQueryJobInfo, requestGetBulkQueryResults, requestSubmitBulkQueryJob } from "./query/query";
 import { handleQueryNotComplete } from "./query/utils";
+import { createAxiosHeader, iterateThroughResults } from "./utils";
 
 export default class BulkAPI {
 
@@ -29,21 +30,8 @@ export default class BulkAPI {
   }
 
   private getRequestConfig(contentType: string, accept: string, endpoint: string): RequestConfig {
-    const headers = {
-      'Content-Type': contentType,
-      Authorization: 'Bearer ' + this.connection.accessToken,
-      accept
-    };
-    const axiosRequestConfig: AxiosRequestConfig = {
-      headers,
-      maxBodyLength: Infinity,
-      maxContentLength: Infinity
-    }
-
-    const requestConfig = {
-      headers: axiosRequestConfig,
-      endpoint
-    }
+    const headers = createAxiosHeader(contentType, accept, this.connection.accessToken);
+    const requestConfig = { headers, endpoint }
     return requestConfig;
   }
 
@@ -51,14 +39,7 @@ export default class BulkAPI {
     let data: string = '';
     const result = await this.getBulkQueryResults(jobId);
     data = result.data;
-    if (result.headers['sforce-locator']) {
-      let locator = result.headers['sforce-locator'];
-      while (locator) {
-        const followingResult = await this.getBulkQueryResults(jobId, locator);
-        data += followingResult.data;
-        locator = followingResult.headers['sforce-locator'];
-      }
-    }
+    result.headers['sforce-locator'] ? data += iterateThroughResults(result.headers, this.getBulkQueryResults, jobId) : data;
     return data;
   }
 
