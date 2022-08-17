@@ -1,6 +1,10 @@
 ## Change Log
 
-### 0.2.1 (2022/08/17 15:45 +00:00)
+### 0.2.2 (2022/08/17 20:01 +00:00)
+- [05a9edd](https://github.com/clemb8/client-sf-bulk2/commit/05a9eddd3b4e8ea36dbcd12f74536433747cf45b) Fix getting all results (@clemb8)
+
+### v0.2.1 (2022/08/17 15:45 +00:00)
+- [79304cc](https://github.com/clemb8/client-sf-bulk2/commit/79304cc9b27641e3e0f2702083004e69d67cc22c) 0.2.1 (@clemb8)
 - [bf418ec](https://github.com/clemb8/client-sf-bulk2/commit/bf418ecd2244e0a50b77978df42c8a9e40cc9520) fixing iterateThroughresult (@clemb8)
 - [27763ff](https://github.com/clemb8/client-sf-bulk2/commit/27763ffd8a950e8092c9f39e9a54c4595700a609) Refactor class (@clemb8)
 
