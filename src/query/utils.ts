@@ -15,7 +15,7 @@ export function includeParametersQueryJobsInfos(configInput: QueryConfig, endpoi
   return endpoint;
 }
 
-export function includeParametersQueryResults(endpoint: string, locator: string | undefined, maxRecords: number | undefined) {
+export function includeParametersQueryResults(endpoint: string, maxRecords: number | undefined, locator: string | undefined) {
   endpoint += '?';
 
   if (locator) {

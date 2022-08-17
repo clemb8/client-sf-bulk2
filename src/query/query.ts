@@ -34,8 +34,8 @@ export async function requestAbortBulkQueryJob(requestConfig: RequestConfig): Pr
   return queryResponse;
 }
 
-export async function requestGetBulkQueryResults(requestConfig: RequestConfig, locator?: string, maxRecords?: number): Promise < AxiosResponse > {
-  if(locator || maxRecords) requestConfig.endpoint = includeParametersQueryResults(requestConfig.endpoint, locator, maxRecords);
+export async function requestGetBulkQueryResults(requestConfig: RequestConfig, maxRecords?: number, locator?: string): Promise < AxiosResponse > {
+  if (locator || maxRecords) requestConfig.endpoint = includeParametersQueryResults(requestConfig.endpoint, maxRecords, locator);
   const axiosresponse: AxiosResponse = await axios.get(requestConfig.endpoint, requestConfig.headers);
   return axiosresponse;
 }

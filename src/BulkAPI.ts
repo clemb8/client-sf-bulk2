@@ -35,22 +35,22 @@ export default class BulkAPI {
     return requestConfig;
   }
 
-  private async iterateThroughResults(headers: AxiosResponseHeaders, jobId: string): Promise<string> {
+  private async iterateThroughResults(headers: AxiosResponseHeaders, jobId: string, maxRecords?: number): Promise<string> {
     let restData = '';
     let locator = headers['sforce-locator'];
-    while (locator) {
-      const followingResult = await this.getBulkQueryResults(jobId, locator);
-      restData += followingResult.data;
+    while (locator !== 'null') {
+      const followingResult = await this.getBulkQueryResults(jobId, maxRecords, locator);
+      restData += followingResult.data.split("\n").slice(1).join("\n");
       locator = followingResult.headers['sforce-locator'];
     }
     return restData;
   }
 
-  private async getAllQueryResults(jobId: string): Promise<string> {
+  private async getAllQueryResults(jobId: string, maxRecords?: number): Promise<string> {
     let data: string = '';
-    const result = await this.getBulkQueryResults(jobId);
+    const result = await this.getBulkQueryResults(jobId, maxRecords);
     data = result.data;
-    if(result.headers['sforce-locator'] !== 'null') data += await this.iterateThroughResults(result.headers, jobId);
+    if(result.headers['sforce-locator'] !== 'null') data += await this.iterateThroughResults(result.headers, jobId, maxRecords);
     return data;
   }
 
@@ -76,10 +76,10 @@ export default class BulkAPI {
     return await requestAbortBulkQueryJob(requestConfig);
   }
 
-  public async getBulkQueryResults(jobId: string, locator?: string, maxRecords?: number): Promise<AxiosResponse> {
+  public async getBulkQueryResults(jobId: string, maxRecords?: number, locator?: string): Promise<AxiosResponse> {
     const endpoint = `${this.endpointQuery}/${jobId}/results`;
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
-    return await requestGetBulkQueryResults(requestConfig, locator, maxRecords);
+    return await requestGetBulkQueryResults(requestConfig, maxRecords, locator);
   }
 
   public async waitBulkQueryEnd(jobId: string, delay?: number): Promise<string> {
@@ -95,10 +95,10 @@ export default class BulkAPI {
     })
   }
 
-  public async getBulkQueryFinalResults(jobId: string, delay?: number) {
-    const jobFinalState = await this.waitBulkQueryEnd(jobId, delay);
+  public async getBulkQueryFinalResults(jobId: string, maxRecordsByRequest?: number) {
+    const jobFinalState = await this.waitBulkQueryEnd(jobId, 3000);
     if (jobFinalState === 'JobComplete') {
-      const result = await this.getAllQueryResults(jobId);
+      const result = await this.getAllQueryResults(jobId, maxRecordsByRequest);
       return result;
     } else {
       handleQueryNotComplete(jobFinalState);
