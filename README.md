@@ -1,28 +1,21 @@
 # client-sf-bulk2
 
-> This is a sample client for the Salesforce Bulk API with some abstraction facilitating short implementations.
+This is a sample client for the Salesforce Bulk API with some abstraction facilitating short implementations. It can be used in JS/TS scripts or in Node Project.
 
 ## Table of Contents
 
 - [General Info](#general-information)
 - [Technologies Used](#technologies-used)
 - [Features](#features)
-- [Screenshots](#screenshots)
-- [Setup](#setup)
 - [Usage](#usage)
 - [Project Status](#project-status)
-- [Room for Improvement](#room-for-improvement)
 - [Acknowledgements](#acknowledgements)
-- [Contact](#contact)
-  <!-- * [License](#license) -->
 
 ## General Information
 
 This project aims to provide :
 - An easy to use client to query and import data via the Salesforce Bulk API ;
 - Some abstractions on top of the Salesforce Bulk API (ex: query in one line) ;
-
-  <!-- You don't have to answer all the questions - just the ones relevant to your project. -->
 
 ## Technologies Used
 
