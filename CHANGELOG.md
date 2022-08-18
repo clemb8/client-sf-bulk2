@@ -1,6 +1,11 @@
 ## Change Log
 
-### 0.5.1 (2022/08/18 18:22 +00:00)
+### 0.5.2 (2022/08/18 18:24 +00:00)
+- [194f918](https://github.com/clemb8/client-sf-bulk2/commit/194f9181ee679fcd0dbdca27f82aaaec92ec706b) try with no source map (@clemb8)
+
+### v0.5.1 (2022/08/18 18:22 +00:00)
+- [e45c391](https://github.com/clemb8/client-sf-bulk2/commit/e45c391bb61efa70ed0285c417a58143f1907e27) 0.5.1 (@clemb8)
+- [f843e45](https://github.com/clemb8/client-sf-bulk2/commit/f843e45088eecaf38d45c99f58118adfac3f5ab6) fix package (@clemb8)
 - [5f31d28](https://github.com/clemb8/client-sf-bulk2/commit/5f31d28d3ace5ecc0551b3c65707ea4bcb86277c) Adjust example (@clemb8)
 
 ### v0.5.0 (2022/08/18 18:03 +00:00)
