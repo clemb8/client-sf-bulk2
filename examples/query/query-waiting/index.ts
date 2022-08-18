@@ -18,14 +18,16 @@ async function submitBulkQueryJob() {
     const response = await bulkAPI.submitQueryJob(queryInput);
     console.log(response);
 
-    const jobFinalState = bulkAPI.waitQueryEnd(response.id);
+    const jobFinalState = await bulkAPI.waitQueryEnd(response.id);
     console.log(jobFinalState);
 
     //then you can get the results
-    const results = bulkAPI.getQueryResults(response.id);
+    const results = await bulkAPI.getQueryResults(response.id);
+    console.log(results);
 
     //In Case of a big query you may want to retrieve by chunk (here by chunk of 200 records)
-    const prudentResumts = bulkAPI.getAllQueryResults(response.id, 200);
+    const prudentResults = await bulkAPI.getAllQueryResults(response.id, 200);
+    console.log(prudentResults)
   } catch (ex: any) {
     console.log(ex);
   }
