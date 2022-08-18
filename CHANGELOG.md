@@ -1,6 +1,13 @@
 ## Change Log
 
-### 0.4.2 (2022/08/18 17:27 +00:00)
+### 0.5.0 (2022/08/18 18:03 +00:00)
+- [b33e983](https://github.com/clemb8/client-sf-bulk2/commit/b33e983f4d86cd4de607bebbbe840d249e3748fa) getAllRecords to public (@clemb8)
+- [e7c0671](https://github.com/clemb8/client-sf-bulk2/commit/e7c0671292747af0d9dbfde7977b8c9403cf34c0) delete dist (@clemb8)
+- [58d3d1b](https://github.com/clemb8/client-sf-bulk2/commit/58d3d1bd66709ffc403ea0836af044668af408b7) Add first example (@clemb8)
+- [f214f5f](https://github.com/clemb8/client-sf-bulk2/commit/f214f5f851f1df02a97605e3946ad5fb3a9ecae7) update readme (@clemb8)
+
+### v0.4.2 (2022/08/18 17:27 +00:00)
+- [b461009](https://github.com/clemb8/client-sf-bulk2/commit/b461009e6a3abf36f7233176f6947f692fe3f226) 0.4.2 (@clemb8)
 - [a3983c7](https://github.com/clemb8/client-sf-bulk2/commit/a3983c7786c3b902cd3e28dd7990f7781e4a69d8) modify tsconfig (@clemb8)
 
 ### v0.4.1 (2022/08/18 17:06 +00:00)
