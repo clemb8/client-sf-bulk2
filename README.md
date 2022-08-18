@@ -41,7 +41,7 @@ import { Parameters, QueryInput } from '../index';
 async function submitBulkQueryJob() {
 
   const conn = new jsforce.Connection({});
-  await conn.login('clem.boschet@wise-fox-1pg4xo.com', 'password(56)gqgYhBHqi7FsXh9EUye8Vnoc');
+  await conn.login('username', 'password');
 
   const bulkParameters: Parameters = {
     accessToken: conn.accessToken,
