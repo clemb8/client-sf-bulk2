@@ -1,6 +1,14 @@
 ## Change Log
 
-### 0.2.2 (2022/08/17 20:01 +00:00)
+### 0.3.0 (2022/08/18 14:40 +00:00)
+- [13bcc11](https://github.com/clemb8/client-sf-bulk2/commit/13bcc111bfbe883e9b9d887e5540da3af6283702) Update README.md (@clemb8)
+- [833b66b](https://github.com/clemb8/client-sf-bulk2/commit/833b66ba591cd626d96fe86b40962c55d8dfa6ff) Update README.md (@clemb8)
+- [5eee0a3](https://github.com/clemb8/client-sf-bulk2/commit/5eee0a318ed21c6ae1227345a2dd2e25f4eb5347) Update README.md (@clemb8)
+- [259cee7](https://github.com/clemb8/client-sf-bulk2/commit/259cee75285b5b7975f10ed82c1e43671131e65f) Add Readme (@clemb8)
+- [19aeda8](https://github.com/clemb8/client-sf-bulk2/commit/19aeda875e40f97bbdd8404ff1e54b839e798cc7) Refactor getFinalQuery (@clemb8)
+
+### v0.2.2 (2022/08/17 20:01 +00:00)
+- [296bcbb](https://github.com/clemb8/client-sf-bulk2/commit/296bcbbd7f5086eafa8d56fb24cc66c375fb2d3c) 0.2.2 (@clemb8)
 - [05a9edd](https://github.com/clemb8/client-sf-bulk2/commit/05a9eddd3b4e8ea36dbcd12f74536433747cf45b) Fix getting all results (@clemb8)
 
 ### v0.2.1 (2022/08/17 15:45 +00:00)

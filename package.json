@@ -1,6 +1,6 @@
 {
   "name": "client-sf-bulk2",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A client for the Salesforce bulk API V2",
   "main": "dist/index.js",
   "scripts": {
