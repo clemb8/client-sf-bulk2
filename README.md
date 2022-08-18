@@ -1,6 +1,6 @@
 # client-sf-bulk2
 
-This is a sample client for the Salesforce Bulk API with some abstraction facilitating short implementations.
+This is a sample client for the Salesforce Bulk API with some abstraction facilitating short implementations. It can be used in JS/TS scripts or in Node Project.
 
 ## Table of Contents
 
