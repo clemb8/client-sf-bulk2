@@ -46,14 +46,6 @@ export default class BulkAPI {
     return restData;
   }
 
-  private async getAllQueryResults(jobId: string, maxRecords?: number): Promise<string> {
-    let data: string = '';
-    const result = await this.getQueryResults(jobId, maxRecords);
-    data = result.data;
-    if(result.headers['sforce-locator'] !== 'null') data += await this.iterateThroughResults(result.headers, jobId, maxRecords);
-    return data;
-  }
-
   public async submitQueryJob(query: QueryInput): Promise<QueryResponse> {
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', this.endpointQuery);
     return await requestSubmitQueryJob(query, requestConfig);
@@ -80,6 +72,14 @@ export default class BulkAPI {
     const endpoint = `${this.endpointQuery}/${jobId}/results`;
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
     return await requestGetQueryResults(requestConfig, maxRecords, locator);
+  }
+
+  public async getAllQueryResults(jobId: string, maxRecords?: number): Promise<string> {
+    let data: string = '';
+    const result = await this.getQueryResults(jobId, maxRecords);
+    data = result.data;
+    if (result.headers['sforce-locator'] !== 'null') data += await this.iterateThroughResults(result.headers, jobId, maxRecords);
+    return data;
   }
 
   public async waitQueryEnd(jobId: string, delay?: number): Promise<string> {
