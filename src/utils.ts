@@ -19,7 +19,7 @@ export function createAxiosHeader(contentType: string, accept: string, connectio
 export function getFinalQueryState(client: BulkAPI, jobId: string, delay: number): Promise<string> {
   return new Promise((resolve) => {
     const interval = setInterval(async () => {
-      const result = await client.getBulkQueryJob(jobId);
+      const result = await client.getQueryJob(jobId);
       if (result.state !== 'UploadComplete' && result.state !== 'InProgress') {
         clearInterval(interval);
         resolve(result.state);

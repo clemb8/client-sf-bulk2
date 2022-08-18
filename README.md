@@ -33,8 +33,39 @@ List the ready features here:
 Check the Salesforce documentation [here](https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/bulk_api_2_0.htm).
 Or use the one line implementation :
 
-`code soon`
+```typescript
+import jsforce from 'jsforce';
+import BulkAPI from '../BulkAPI';
+import { Parameters, QueryInput } from '../index';
 
+async function submitBulkQueryJob() {
+
+  const conn = new jsforce.Connection({});
+  await conn.login('clem.boschet@wise-fox-1pg4xo.com', 'password(56)gqgYhBHqi7FsXh9EUye8Vnoc');
+
+  const bulkParameters: Parameters = {
+    accessToken: conn.accessToken,
+    apiVersion: '55.0',
+    instanceUrl: conn.instanceUrl
+  };
+
+  try {
+    const bulkAPI = new BulkAPI(bulkParameters);
+    const queryInput: QueryInput = {
+      query: 'Select Id, Name from Account',
+      operation: 'query'
+    };
+
+    const response = await bulkAPI.submitAndGetQueryResults(queryInput, 10);
+    console.log(response);
+    
+  } catch (ex: any) {
+    console.log(ex);
+  }
+}
+
+submitBulkQueryJob();
+```
 ## Project Status
 
 Project is: _in progress_.
