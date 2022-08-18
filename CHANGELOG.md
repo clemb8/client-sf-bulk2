@@ -1,6 +1,10 @@
 ## Change Log
 
-### 0.4.1 (2022/08/18 17:06 +00:00)
+### 0.4.2 (2022/08/18 17:27 +00:00)
+- [a3983c7](https://github.com/clemb8/client-sf-bulk2/commit/a3983c7786c3b902cd3e28dd7990f7781e4a69d8) modify tsconfig (@clemb8)
+
+### v0.4.1 (2022/08/18 17:06 +00:00)
+- [022289f](https://github.com/clemb8/client-sf-bulk2/commit/022289f737a33e7d09995ac11fc808c9177d6c39) 0.4.1 (@clemb8)
 - [9688732](https://github.com/clemb8/client-sf-bulk2/commit/968873299be61551e5b34b9e3891c7a0d84ecc83) Adjust packaging (@clemb8)
 
 ### v0.4.0 (2022/08/18 16:59 +00:00)
