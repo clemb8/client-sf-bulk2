@@ -9,7 +9,7 @@ import { QueryConfig } from "./interfaces/QueryConfig";
 import { QueryInput } from "./interfaces/QueryInput";
 import { QueryResponse } from "./interfaces/QueryResponse";
 import { RequestConfig } from "./interfaces/RequestConfig";
-import { requestAbortBulkQueryJob, requestGetAllBulkQueryJobInfo, requestGetBulkQueryJobInfo, requestGetBulkQueryResults, requestSubmitBulkQueryJob } from "./query/query";
+import { requestAbortQueryJob, requestGetAllQueryJobInfo, requestGetQueryJobInfo, requestGetQueryResults, requestSubmitQueryJob } from "./query/query";
 import { handleQueryNotComplete } from "./query/utils";
 import { createAxiosHeader, getFinalQueryState } from "./utils";
 
@@ -39,7 +39,7 @@ export default class BulkAPI {
     let restData = '';
     let locator = headers['sforce-locator'];
     while (locator !== 'null') {
-      const followingResult = await this.getBulkQueryResults(jobId, maxRecords, locator);
+      const followingResult = await this.getQueryResults(jobId, maxRecords, locator);
       restData += followingResult.data.split("\n").slice(1).join("\n");
       locator = followingResult.headers['sforce-locator'];
     }
@@ -48,53 +48,59 @@ export default class BulkAPI {
 
   private async getAllQueryResults(jobId: string, maxRecords?: number): Promise<string> {
     let data: string = '';
-    const result = await this.getBulkQueryResults(jobId, maxRecords);
+    const result = await this.getQueryResults(jobId, maxRecords);
     data = result.data;
     if(result.headers['sforce-locator'] !== 'null') data += await this.iterateThroughResults(result.headers, jobId, maxRecords);
     return data;
   }
 
-  public async submitBulkQueryJob(query: QueryInput): Promise<QueryResponse> {
+  public async submitQueryJob(query: QueryInput): Promise<QueryResponse> {
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', this.endpointQuery);
-    return await requestSubmitBulkQueryJob(query, requestConfig);
+    return await requestSubmitQueryJob(query, requestConfig);
   }
 
-  public async getBulkQueryJob(jobId: string): Promise<QueryResponse> {
+  public async getQueryJob(jobId: string): Promise<QueryResponse> {
     const endpoint = `${this.endpointQuery}/${jobId}`
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
-    return await requestGetBulkQueryJobInfo(requestConfig);
+    return await requestGetQueryJobInfo(requestConfig);
   }
 
-  public async getAllBulkQueryJobInfo(configInput?: QueryConfig): Promise<AllQueryJobsInfoResponse> {
+  public async getAllQueryJobInfo(configInput?: QueryConfig): Promise<AllQueryJobsInfoResponse> {
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', this.endpointQuery);
-    return await requestGetAllBulkQueryJobInfo(requestConfig, configInput);
+    return await requestGetAllQueryJobInfo(requestConfig, configInput);
   }
 
-  public async abortBulkQueryJob(jobId: string): Promise<QueryResponse> {
+  public async abortQueryJob(jobId: string): Promise<QueryResponse> {
     const endpoint = `${this.endpointQuery}/${jobId}`
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
-    return await requestAbortBulkQueryJob(requestConfig);
+    return await requestAbortQueryJob(requestConfig);
   }
 
-  public async getBulkQueryResults(jobId: string, maxRecords?: number, locator?: string): Promise<AxiosResponse> {
+  public async getQueryResults(jobId: string, maxRecords?: number, locator?: string): Promise<AxiosResponse> {
     const endpoint = `${this.endpointQuery}/${jobId}/results`;
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
-    return await requestGetBulkQueryResults(requestConfig, maxRecords, locator);
+    return await requestGetQueryResults(requestConfig, maxRecords, locator);
   }
 
-  public async waitBulkQueryEnd(jobId: string, delay?: number): Promise<string> {
+  public async waitQueryEnd(jobId: string, delay?: number): Promise<string> {
     if(!delay) delay = 3000;
     return await getFinalQueryState(this, jobId, delay);
   }
 
-  public async getBulkQueryFinalResults(jobId: string, maxRecordsByRequest?: number) {
-    const jobFinalState = await this.waitBulkQueryEnd(jobId, 3000);
+  public async getQueryFinalResults(jobId: string, maxRecordsByRequest?: number) {
+    if(!maxRecordsByRequest) maxRecordsByRequest = 200;
+    const jobFinalState = await this.waitQueryEnd(jobId, 3000);
     if (jobFinalState === 'JobComplete') {
       const result = await this.getAllQueryResults(jobId, maxRecordsByRequest);
       return result;
     } else {
       handleQueryNotComplete(jobFinalState);
     }
+  }
+
+  public async submitAndGetQueryResults(query: QueryInput, maxRecordsByRequest?: number) {
+    const queryJob = await this.submitQueryJob(query);
+    return await this.getQueryFinalResults(queryJob.id, maxRecordsByRequest);
   }
 
   public async createDataUploadJob(jobUploadRequest: JobUploadRequest): Promise<JobUploadResponse> {
