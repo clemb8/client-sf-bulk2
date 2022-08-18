@@ -73,6 +73,4 @@ Project is: _in progress_.
 
 ## Acknowledgements
 
-Give credit here.
-
 - This project was inspired by https://github.com/msrivastav13/node-sf-bulk2#node-sf-bulk2 ;
