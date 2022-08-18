@@ -11,7 +11,7 @@ import { QueryResponse } from "./interfaces/QueryResponse";
 import { RequestConfig } from "./interfaces/RequestConfig";
 import { requestAbortBulkQueryJob, requestGetAllBulkQueryJobInfo, requestGetBulkQueryJobInfo, requestGetBulkQueryResults, requestSubmitBulkQueryJob } from "./query/query";
 import { handleQueryNotComplete } from "./query/utils";
-import { createAxiosHeader } from "./utils";
+import { createAxiosHeader, getFinalQueryState } from "./utils";
 
 export default class BulkAPI {
 
@@ -84,15 +84,7 @@ export default class BulkAPI {
 
   public async waitBulkQueryEnd(jobId: string, delay?: number): Promise<string> {
     if(!delay) delay = 3000;
-    return new Promise((resolve) => {
-      const interval = setInterval(async () => {
-        const result = await this.getBulkQueryJob(jobId);
-        if (result.state !== 'UploadComplete' && result.state !== 'InProgress') {
-          clearInterval(interval);
-          resolve(result.state);
-        }
-      }, delay);
-    })
+    return await getFinalQueryState(this, jobId, delay);
   }
 
   public async getBulkQueryFinalResults(jobId: string, maxRecordsByRequest?: number) {
