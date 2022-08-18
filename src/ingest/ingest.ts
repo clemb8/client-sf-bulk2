@@ -3,6 +3,7 @@ import { JobInfoResponse } from "../interfaces/JobInfoResponse";
 import { JobUploadRequest } from "../interfaces/JobUploadRequest";
 import { JobUploadResponse } from "../interfaces/JobUploadResponse";
 import { RequestConfig } from "../interfaces/RequestConfig";
+import { getFileBody } from "./utils";
 
 export async function requestCreateJob(jobUploadRequest: JobUploadRequest, requestConfig: RequestConfig) {
   const axiosresponse: AxiosResponse = await axios.post(requestConfig.endpoint, JSON.stringify(jobUploadRequest), requestConfig.headers);
@@ -10,7 +11,8 @@ export async function requestCreateJob(jobUploadRequest: JobUploadRequest, reque
   return jobuploadresponse;
 }
 
-export async function requestJobUploadData(data: string, requestConfig: RequestConfig) {
+export async function requestJobUploadData(filename: string, requestConfig: RequestConfig) {
+  const data = await getFileBody(filename);
   const axiosresponse: AxiosResponse = await axios.put(requestConfig.endpoint, data, requestConfig.headers);
   return axiosresponse.status;
 }

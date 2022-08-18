@@ -108,16 +108,20 @@ export default class BulkAPI {
     return await requestCreateJob(jobUploadRequest, requestConfig);
   }
 
-  public async uploadJobData(contenturl: string, data: string): Promise<number> {
-    const endpoint = this.connection.instanceUrl + '/' + contenturl;
+  public async uploadJobData(jobId: string, filename: string): Promise<number> {
+    const endpoint = `${this.endpointIngest}/${jobId}/batches`;
     const requestConfig: RequestConfig = this.getRequestConfig('text/csv', 'application/json', endpoint);
-    return await requestJobUploadData(data, requestConfig);
+    return await requestJobUploadData(filename, requestConfig);
   }
 
   public async startJob(jobId: string): Promise<JobUploadResponse> {
     const endpoint = `${this.endpointIngest}/${jobId}`
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'application/json', endpoint);
     return await requestJobStart(requestConfig);
+  }
+
+  public async createAndStartJob(jobUploadRequest: JobUploadRequest, filename: string) {
+    
   }
 
   public async abortJob(jobId: string): Promise<JobUploadResponse> {
