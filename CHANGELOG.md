@@ -1,9 +1,15 @@
 ## Change Log
 
-### 0.4.0 (2022/08/18 16:59 +00:00)
+### 0.4.1 (2022/08/18 17:06 +00:00)
+- [9688732](https://github.com/clemb8/client-sf-bulk2/commit/968873299be61551e5b34b9e3891c7a0d84ecc83) Adjust packaging (@clemb8)
+
+### v0.4.0 (2022/08/18 16:59 +00:00)
+- [0f6fe5e](https://github.com/clemb8/client-sf-bulk2/commit/0f6fe5e430dfa3f6e3574ea754fdbaada715f954) 0.4.0 (@clemb8)
 - [09794ac](https://github.com/clemb8/client-sf-bulk2/commit/09794ac70e9a8f38886b666f6d712813d57c6e0b) Add code typescript (@clemb8)
 - [b73a9ae](https://github.com/clemb8/client-sf-bulk2/commit/b73a9aed41278fa79cb2c2420056af51eea0f923) Refactor names (@clemb8)
 - [0f31d22](https://github.com/clemb8/client-sf-bulk2/commit/0f31d2207f2f67ea8b097f1f4ee5a59ba6aa2e45) Merge branch 'main' of github.com:clemb8/client-sf-bulk2 into main (@clemb8)
+
+### v0.3.0 (2022/08/18 14:40 +00:00)
 - [550becf](https://github.com/clemb8/client-sf-bulk2/commit/550becf3c2f78e1985171797870307e768a96fd6) 0.3.0 (@clemb8)
 - [13bcc11](https://github.com/clemb8/client-sf-bulk2/commit/13bcc111bfbe883e9b9d887e5540da3af6283702) Update README.md (@clemb8)
 - [833b66b](https://github.com/clemb8/client-sf-bulk2/commit/833b66ba591cd626d96fe86b40962c55d8dfa6ff) Update README.md (@clemb8)
