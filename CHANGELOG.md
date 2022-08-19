@@ -1,6 +1,10 @@
 ## Change Log
 
-### 0.7.2 (2022/08/19 08:55 +00:00)
+### 0.7.3 (2022/08/19 09:07 +00:00)
+- [3a96613](https://github.com/clemb8/client-sf-bulk2/commit/3a96613b26259242180741baef04685e73c84ee9) fix example (@clemb8)
+
+### v0.7.2 (2022/08/19 08:55 +00:00)
+- [d05b629](https://github.com/clemb8/client-sf-bulk2/commit/d05b629be8b2540f0ca8e0827b97719dfe06e26d) 0.7.2 (@clemb8)
 - [a40f157](https://github.com/clemb8/client-sf-bulk2/commit/a40f157ca1c8ab63c788984325e67468953ced6a) fix get result import (@clemb8)
 
 ### v0.7.1 (2022/08/19 08:00 +00:00)
