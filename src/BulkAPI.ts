@@ -124,7 +124,7 @@ export default class BulkAPI {
     const job = await this.createDataUploadJob(jobUploadRequest);
     const statusUpload = await this.uploadJobData(job.id, filename);
     if(statusUpload === 201) return await this.startJob(job.id);
-    throw 'Upload Failed';
+    throw new Error('Upload Failed');
   }
 
   public async abortJob(jobId: string): Promise<JobUploadResponse> {
