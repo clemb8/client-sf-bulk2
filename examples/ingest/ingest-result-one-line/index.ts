@@ -15,7 +15,7 @@ async function importData() {
       'object': 'Account',
       'operation': 'insert'
     };
-    const response = await bulkAPI.createAndWaitJobResult(jobRequest, './account.csv');
+    const response = await bulkAPI.createAndWaitJobResult(jobRequest, './accounts.csv');
     console.log(response);
   } catch (ex: any) {
     console.log(ex);
