@@ -11,7 +11,7 @@ import { QueryResponse } from "./interfaces/QueryResponse";
 import { RequestConfig } from "./interfaces/RequestConfig";
 import { requestAbortQueryJob, requestGetAllQueryJobInfo, requestGetQueryJobInfo, requestGetQueryResults, requestSubmitQueryJob } from "./query/query";
 import { handleQueryNotComplete } from "./query/utils";
-import { createAxiosHeader, getFinalQueryState } from "./utils";
+import { createAxiosHeader, getFinalJobState, getFinalQueryState } from "./utils";
 
 export default class BulkAPI {
 
@@ -147,12 +147,14 @@ export default class BulkAPI {
 
   public async waitJobEnd(jobId: string, delay?: number): Promise<string> {
     if (!delay) delay = 3000;
-    return await getFinalQueryState(this, jobId, delay);
+    return await getFinalJobState(this, jobId, delay);
   }
 
   public async createAndWaitJobResult(jobUploadRequest: JobUploadRequest, filename: string) {
     const job = await this.createAndStartJob(jobUploadRequest, filename);
-    return await this.waitJobEnd(job.id);
+    const finalJobState = await this.waitJobEnd(job.id);
+    if (finalJobState === 'JobComplete') return await this.getIngestJobInfo(job.id);
+    throw new Error(`The Job ${job.id} didn't complete`);
   }
 
   public async getJobSuccesfulResults(jobId: string): Promise<string> {
