@@ -1,6 +1,10 @@
 ## Change Log
 
-### 0.7.0 (2022/08/19 07:56 +00:00)
+### 0.7.1 (2022/08/19 08:00 +00:00)
+- [78ebcb4](https://github.com/clemb8/client-sf-bulk2/commit/78ebcb48f16a849e49a02e127a311e22762ff846) fixes lint (@clemb8)
+
+### v0.7.0 (2022/08/19 07:56 +00:00)
+- [d2fff12](https://github.com/clemb8/client-sf-bulk2/commit/d2fff1267a8d76f40b92a89cdbf30f08ed810e68) 0.7.0 (@clemb8)
 - [48090dd](https://github.com/clemb8/client-sf-bulk2/commit/48090dd7aea46e0f6f9e47c30bb919ded6266939) Add example ingest (@clemb8)
 - [e9591fa](https://github.com/clemb8/client-sf-bulk2/commit/e9591fac082e3bae0cc948742d5ba7dbd64e377b) Add one line import (@clemb8)
 - [ba97afb](https://github.com/clemb8/client-sf-bulk2/commit/ba97afbef873f42368c42903999f93f7453f5886) Fix code Readme (@clemb8)
