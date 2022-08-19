@@ -35,13 +35,12 @@ Or use the one line implementation :
 
 ```typescript
 import jsforce from 'jsforce';
-import BulkAPI from '../BulkAPI';
-import { Parameters, QueryInput } from '../index';
+import { BulkAPI, Parameters, QueryInput } from 'client-sf-bulk2';
 
 async function submitBulkQueryJob() {
 
   const conn = new jsforce.Connection({});
-  await conn.login('username', 'password');
+  await conn.login(process.env.USERNAME!, process.env.PASSWORD!);
 
   const bulkParameters: Parameters = {
     accessToken: conn.accessToken,
@@ -58,13 +57,13 @@ async function submitBulkQueryJob() {
 
     const response = await bulkAPI.submitAndGetQueryResults(queryInput, 10);
     console.log(response);
-    
   } catch (ex: any) {
     console.log(ex);
   }
 }
 
 submitBulkQueryJob();
+
 ```
 ## Project Status
 
