@@ -1,6 +1,12 @@
 ## Change Log
 
-### 0.6.0 (2022/08/18 20:19 +00:00)
+### 0.7.0 (2022/08/19 07:56 +00:00)
+- [48090dd](https://github.com/clemb8/client-sf-bulk2/commit/48090dd7aea46e0f6f9e47c30bb919ded6266939) Add example ingest (@clemb8)
+- [e9591fa](https://github.com/clemb8/client-sf-bulk2/commit/e9591fac082e3bae0cc948742d5ba7dbd64e377b) Add one line import (@clemb8)
+- [ba97afb](https://github.com/clemb8/client-sf-bulk2/commit/ba97afbef873f42368c42903999f93f7453f5886) Fix code Readme (@clemb8)
+
+### v0.6.0 (2022/08/18 20:19 +00:00)
+- [37f3c63](https://github.com/clemb8/client-sf-bulk2/commit/37f3c63d539daed8f5d73dc0e1d28dfa43180593) 0.6.0 (@clemb8)
 - [34c2526](https://github.com/clemb8/client-sf-bulk2/commit/34c252610fa66d0cccc0201089dadb4a9eae6a8b) add getFileBody for uploading data (@clemb8)
 - [cf0603d](https://github.com/clemb8/client-sf-bulk2/commit/cf0603d26a1900a73e89ae0379ba2a189c0f6642) Update README.md (@clemb8)
 
