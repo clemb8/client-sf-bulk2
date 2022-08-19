@@ -121,7 +121,10 @@ export default class BulkAPI {
   }
 
   public async createAndStartJob(jobUploadRequest: JobUploadRequest, filename: string) {
-    
+    const job = await this.createDataUploadJob(jobUploadRequest);
+    const statusUpload = await this.uploadJobData(job.id, filename);
+    if(statusUpload === 201) return await this.startJob(job.id);
+    throw 'Upload Failed';
   }
 
   public async abortJob(jobId: string): Promise<JobUploadResponse> {
@@ -140,6 +143,16 @@ export default class BulkAPI {
     const endpoint = `${this.endpointIngest}/${jobId}/${resultType}`;
     const requestConfig: RequestConfig = this.getRequestConfig('application/json', 'text/csv', endpoint);
     return await requestGetJobResults(requestConfig);
+  }
+
+  public async waitJobEnd(jobId: string, delay?: number): Promise<string> {
+    if (!delay) delay = 3000;
+    return await getFinalQueryState(this, jobId, delay);
+  }
+
+  public async createAndWaitJobResult(jobUploadRequest: JobUploadRequest, filename: string) {
+    const job = await this.createAndStartJob(jobUploadRequest, filename);
+    return await this.waitJobEnd(job.id);
   }
 
   public async getJobSuccesfulResults(jobId: string): Promise<string> {
