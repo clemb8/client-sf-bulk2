@@ -1,6 +1,12 @@
 ## Change Log
 
-### 0.7.3 (2022/08/19 09:07 +00:00)
+### 0.7.4 (2022/08/22 16:49 +00:00)
+- [662ca81](https://github.com/clemb8/client-sf-bulk2/commit/662ca810e4026847bc548ecfdeb8f1007b7f0e3b) Adjust metadata (@clemb8)
+- [cbba4df](https://github.com/clemb8/client-sf-bulk2/commit/cbba4df865ec01ba22a6423be3f1c0b363ab1b44) Add example (@clemb8)
+- [c24b44d](https://github.com/clemb8/client-sf-bulk2/commit/c24b44d0baa74c0d16f98e4a7da0fd0eb89e8768) Add some metadata (@clemb8)
+
+### v0.7.3 (2022/08/19 09:07 +00:00)
+- [fe2d894](https://github.com/clemb8/client-sf-bulk2/commit/fe2d8948edd0cb28ad0aa561bc299100ccb1fc74) 0.7.3 (@clemb8)
 - [3a96613](https://github.com/clemb8/client-sf-bulk2/commit/3a96613b26259242180741baef04685e73c84ee9) fix example (@clemb8)
 
 ### v0.7.2 (2022/08/19 08:55 +00:00)
