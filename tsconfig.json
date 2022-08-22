@@ -12,4 +12,5 @@
   },
 
   "include": ["./src", "examples/query/exampleQuery.ts"],
+  "exclude": ["./src/test"]
 }

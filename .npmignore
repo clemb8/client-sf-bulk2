@@ -3,3 +3,5 @@ tsconfig.json
 tslint.json
 docs/
 examples/
+CHANGELOG.md
+License.txt
