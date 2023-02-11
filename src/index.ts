@@ -6,6 +6,7 @@ import { QueryConfig } from './interfaces/QueryConfig';
 import { QueryInput } from './interfaces/QueryInput';
 import { QueryResponse } from './interfaces/QueryResponse';
 import { Parameters } from './interfaces/Parameters';
+import { MonitorJob } from './utils';
 
 
 export {
@@ -16,7 +17,8 @@ export {
   Parameters,
   JobUploadRequest,
   JobUploadResponse,
-  QueryInput
+  QueryInput,
+  MonitorJob,
 };
 
 export { default as BulkAPI } from './BulkAPI';

@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "client-sf-bulk2": "^0.7.2",
-    "jsforce": "^1.11.0",
+    "client-sf-oauth": "^0.4.1",
     "typescript": "^4.7.4"
   },
   "devDependencies": {

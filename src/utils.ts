@@ -2,6 +2,9 @@ import { AxiosRequestConfig } from "axios";
 import BulkAPI from "./BulkAPI";
 import { JobInfoResponse } from "./interfaces/JobInfoResponse";
 import { QueryResponse } from "./interfaces/QueryResponse";
+import { EventEmitter } from "events";
+
+export const MonitorJob = new EventEmitter();
 
 export function createAxiosHeader(contentType: string, accept: string, connection: string) {
   const headers = {
@@ -31,6 +34,7 @@ async function getFinalBulkState(client: BulkAPI, jobId: string, delay: number, 
     const interval = setInterval(async () => {
       let result : QueryResponse | JobInfoResponse;
       type === 'query' ? result = await client.getQueryJob(jobId) : result = await client.getIngestJobInfo(jobId);
+      MonitorJob.emit('monitoring', result);
       if (result.state !== 'UploadComplete' && result.state !== 'InProgress') {
         clearInterval(interval);
         resolve(result.state);
