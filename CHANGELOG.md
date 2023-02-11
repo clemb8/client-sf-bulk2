@@ -1,6 +1,11 @@
 ## Change Log
 
-### 0.7.5 (2022/08/22 16:50 +00:00)
+### 0.8.0 (2023/02/11 17:05 +00:00)
+- [af5c315](https://github.com/clemb8/client-sf-bulk2/commit/af5c315beec3579c3ebe1b9418a0c650bf3391d4) npx githug changes (@clemb8)
+- [1b6a51b](https://github.com/clemb8/client-sf-bulk2/commit/1b6a51b9f52b0d382fabbbe885ff8565e8ad7d12) Add MonitorJob Event Emitter (@clemb8)
+
+### v0.7.5 (2022/08/22 16:50 +00:00)
+- [0e4fa72](https://github.com/clemb8/client-sf-bulk2/commit/0e4fa7256fcacb76e181b819d9b4add02a79f51b) 0.7.5 (@clemb8)
 - [017bf9c](https://github.com/clemb8/client-sf-bulk2/commit/017bf9c6bd04b939c9f1a25060b79d9eed2a50e0) Add types node (@clemb8)
 
 ### v0.7.4 (2022/08/22 16:49 +00:00)
