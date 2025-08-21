@@ -1,44 +1,44 @@
 import { AxiosRequestConfig } from "axios";
+import { EventEmitter } from "events";
 import BulkAPI from "./BulkAPI";
 import { JobInfoResponse } from "./interfaces/JobInfoResponse";
 import { QueryResponse } from "./interfaces/QueryResponse";
-import { EventEmitter } from "events";
 
 export const MonitorJob = new EventEmitter();
 
 export function createAxiosHeader(contentType: string, accept: string, connection: string) {
   const headers = {
-    'Content-Type': contentType,
-    Authorization: 'Bearer ' + connection,
+    "Content-Type": contentType,
+    "Authorization": "Bearer " + connection,
     accept
   };
   const axiosRequestConfig: AxiosRequestConfig = {
     headers,
     maxBodyLength: Infinity,
     maxContentLength: Infinity
-  }
+  };
 
   return axiosRequestConfig;
 }
 
 export async function getFinalQueryState(client: BulkAPI, jobId: string, delay: number): Promise<string> {
-  return await getFinalBulkState(client, jobId, delay, 'query');
+  return await getFinalBulkState(client, jobId, delay, "query");
 }
 
 export async function getFinalJobState(client: BulkAPI, jobId: string, delay: number): Promise<string> {
-  return await getFinalBulkState(client, jobId, delay, 'ingest');
+  return await getFinalBulkState(client, jobId, delay, "ingest");
 }
 
 async function getFinalBulkState(client: BulkAPI, jobId: string, delay: number, type: string): Promise<string> {
   return new Promise((resolve) => {
     const interval = setInterval(async () => {
-      let result : QueryResponse | JobInfoResponse;
-      type === 'query' ? result = await client.getQueryJob(jobId) : result = await client.getIngestJobInfo(jobId);
-      MonitorJob.emit('monitoring', result);
-      if (result.state !== 'UploadComplete' && result.state !== 'InProgress') {
+      let result: QueryResponse | JobInfoResponse;
+      type === "query" ? result = await client.getQueryJob(jobId) : result = await client.getIngestJobInfo(jobId);
+      MonitorJob.emit("monitoring", result);
+      if (result.state !== "UploadComplete" && result.state !== "InProgress") {
         clearInterval(interval);
         resolve(result.state);
       }
     }, delay);
-  })
+  });
 }

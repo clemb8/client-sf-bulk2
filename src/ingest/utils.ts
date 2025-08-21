@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from "fs";
 
 export async function getFileBody(filename: string) {
   return new Promise((resolve, reject) => {

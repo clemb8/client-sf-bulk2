@@ -1,6 +1,6 @@
 export interface QueryConfig {
-  isPkChunkingEnabled?: string,
-  jobType?: string,
-  concurrencyMode?: string,
-  queryLocator?: number
+  isPkChunkingEnabled?: string;
+  jobType?: string;
+  concurrencyMode?: string;
+  queryLocator?: number;
 }

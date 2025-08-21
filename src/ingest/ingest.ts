@@ -25,11 +25,11 @@ async function modifyStateJob(state: string, requestConfig: RequestConfig) {
 }
 
 export async function requestJobStart(requestConfig: RequestConfig) {
-  return await modifyStateJob('UploadComplete', requestConfig);
+  return await modifyStateJob("UploadComplete", requestConfig);
 }
 
 export async function requestJobAbort(requestConfig: RequestConfig) {
-  return await modifyStateJob('Aborted', requestConfig);
+  return await modifyStateJob("Aborted", requestConfig);
 }
 
 export async function requestGetJobInfo(requestConfig: RequestConfig) {
