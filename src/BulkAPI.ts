@@ -152,7 +152,7 @@ export default class BulkAPI {
     return requestConfig;
   }
 
-  private async iterateThroughResults(headers: AxiosResponseHeaders, jobId: string, maxRecords?: number): Promise<string> {
+  private async iterateThroughResults(headers: Record<string, any>, jobId: string, maxRecords?: number): Promise<string> {
     let restData = "";
     let locator = headers["sforce-locator"];
     while (locator !== "null") {
