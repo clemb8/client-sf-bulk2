@@ -1,4 +1,4 @@
-import { AxiosResponse, AxiosResponseHeaders } from "axios";
+import { AxiosResponse } from "axios";
 import { requestCreateJob, requestGetJobInfo, requestGetJobResults, requestJobAbort, requestJobStart, requestJobUploadData } from "./ingest/ingest";
 import { AllQueryJobsInfoResponse } from "./interfaces/AllQueryJobsInfoResponse";
 import { JobInfoResponse } from "./interfaces/JobInfoResponse";
@@ -51,7 +51,7 @@ export default class BulkAPI {
     return await requestAbortQueryJob(requestConfig);
   }
 
-  public async getQueryResults(jobId: string, maxRecords?: number, locator?: string): Promise<AxiosResponse> {
+  public async getQueryResults(jobId: string, maxRecords?: number, locator?: string): Promise<AxiosResponse<string>> {
     const endpoint = `${this.endpointQuery}/${jobId}/results`;
     const requestConfig: RequestConfig = this.getRequestConfig("application/json", "application/json", endpoint);
     return await requestGetQueryResults(requestConfig, maxRecords, locator);
@@ -61,7 +61,7 @@ export default class BulkAPI {
     let data: string = "";
     const result = await this.getQueryResults(jobId, maxRecords);
     data = result.data;
-    if (result.headers["sforce-locator"] !== "null") { data += await this.iterateThroughResults(result.headers, jobId, maxRecords); }
+    if (BulkAPI.readLocator(result.headers) !== "null") { data += await this.iterateThroughResults(result.headers, jobId, maxRecords); }
     return data;
   }
 
@@ -152,13 +152,18 @@ export default class BulkAPI {
     return requestConfig;
   }
 
-  private async iterateThroughResults(headers: Record<string, any>, jobId: string, maxRecords?: number): Promise<string> {
+  private static readLocator(headers: AxiosResponse["headers"]): string | undefined {
+    const locator: unknown = headers["sforce-locator"];
+    return typeof locator === "string" ? locator : undefined;
+  }
+
+  private async iterateThroughResults(headers: AxiosResponse["headers"], jobId: string, maxRecords?: number): Promise<string> {
     let restData = "";
-    let locator = headers["sforce-locator"];
+    let locator = BulkAPI.readLocator(headers);
     while (locator !== "null") {
       const followingResult = await this.getQueryResults(jobId, maxRecords, locator);
       restData += followingResult.data.split("\n").slice(1).join("\n");
-      locator = followingResult.headers["sforce-locator"];
+      locator = BulkAPI.readLocator(followingResult.headers);
     }
     return restData;
   }

@@ -30,15 +30,23 @@ export async function getFinalJobState(client: BulkAPI, jobId: string, delay: nu
 }
 
 async function getFinalBulkState(client: BulkAPI, jobId: string, delay: number, type: string): Promise<string> {
-  return new Promise((resolve) => {
-    const interval = setInterval(async () => {
-      let result: QueryResponse | JobInfoResponse;
-      type === "query" ? result = await client.getQueryJob(jobId) : result = await client.getIngestJobInfo(jobId);
-      MonitorJob.emit("monitoring", result);
-      if (result.state !== "UploadComplete" && result.state !== "InProgress") {
-        clearInterval(interval);
-        resolve(result.state);
-      }
+  return new Promise<string>((resolve, reject) => {
+    const interval = setInterval(() => {
+      void (async () => {
+        try {
+          const result: QueryResponse | JobInfoResponse = type === "query"
+            ? await client.getQueryJob(jobId)
+            : await client.getIngestJobInfo(jobId);
+          MonitorJob.emit("monitoring", result);
+          if (result.state !== "UploadComplete" && result.state !== "InProgress") {
+            clearInterval(interval);
+            resolve(result.state);
+          }
+        } catch (error) {
+          clearInterval(interval);
+          reject(error instanceof Error ? error : new Error(String(error)));
+        }
+      })();
     }, delay);
   });
 }

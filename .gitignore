@@ -22,7 +22,6 @@ coverage
 # API keys and secrets
 .env
 
-src/test/
 # Dependency directory
 node_modules
 bower_components
@@ -129,3 +128,6 @@ aidlc/diagnostics/
 # aidlc/spaces/*/intents/*/<phase>/<stage>/*.md (artifacts + diary).
 .claude/settings.local.json
 # END AI-DLC:gitignore
+.claude/**
+aidlc/**
+aidlc/spaces/default/**
