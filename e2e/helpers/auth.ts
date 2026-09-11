@@ -45,6 +45,53 @@ function describeOAuthFailure(error: unknown): string {
 }
 
 /**
+ * Map a Salesforce OAuth failure onto the setting that actually fixes it.
+ *
+ * Written after a live run produced two different `invalid_grant` messages in
+ * succession, each needing a different Connected App change. A single generic
+ * remedy sent the reader to the wrong screen for the second one, which is worse
+ * than no remedy at all.
+ */
+function remedyFor(reason: string): string {
+  const lower = reason.toLowerCase();
+  const appPath = "  Setup -> App Manager -> your Connected App -> ";
+
+  if (lower.includes("no client credentials user")) {
+    return (
+      `${appPath}Manage -> Edit Policies ->\n` +
+      "  Client Credentials Flow -> assign a Run As user with API Enabled.\n"
+    );
+  }
+  if (lower.includes("no valid scopes")) {
+    return (
+      `${appPath}Edit -> API (Enable OAuth Settings) ->\n` +
+      '  Selected OAuth Scopes -> add "Manage user data via APIs (api)".\n' +
+      "  The client-credentials flow issues a token with the app's scopes, and\n" +
+      "  without `api` there is nothing the token may do.\n"
+    );
+  }
+  if (lower.includes("inactive user")) {
+    return "  The Run As user is inactive. Activate it, or choose another.\n";
+  }
+  if (lower.includes("unsupported_grant_type")) {
+    return (
+      `${appPath}Edit -> API (Enable OAuth Settings) ->\n` +
+      '  tick "Enable Client Credentials Flow".\n'
+    );
+  }
+  if (lower.includes("invalid_client")) {
+    return (
+      "  SF_CLIENT_ID or SF_CLIENT_SECRET does not match the Connected App.\n" +
+      "  Re-read both from Manage Consumer Details.\n"
+    );
+  }
+  return (
+    `${appPath}confirm the client-credentials flow is\n` +
+    "  enabled, has a Run As user, and has the `api` OAuth scope.\n"
+  );
+}
+
+/**
  * Obtain an access token.
  *
  * `token` mode returns the one supplied. `client-credentials` mode mints a
@@ -101,12 +148,9 @@ export async function resolveAccessToken(config: E2eConfig): Promise<string> {
       "Failed to mint an access token with the client-credentials flow.\n" +
         `  Salesforce said: ${reason}\n` +
         `  Token endpoint:  ${config.loginUrl ?? config.instanceUrl}/services/oauth2/token\n` +
-        "  Fix either way:\n" +
-        "    (a) Setup -> App Manager -> your app -> Manage -> Edit Policies ->\n" +
-        "        Client Credentials Flow -> assign a Run As user. Salesforce\n" +
-        "        rejects the flow without one, which is what this error means.\n" +
-        "    (b) Or set SF_ACCESS_TOKEN in .env and re-run; it is used as a\n" +
-        "        fallback when minting fails.",
+        `${remedyFor(reason)}` +
+        "  Or set SF_ACCESS_TOKEN in .env and re-run; it is used as a fallback\n" +
+        "  when minting fails.",
     );
   }
 
