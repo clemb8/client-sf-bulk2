@@ -4,5 +4,5 @@
     "noEmit": true,
     "rootDir": "."
   },
-  "include": ["./src", "./test", "./vitest.config.mts"]
+  "include": ["./src", "./test", "./e2e", "./vitest.config.mts", "./vitest.e2e.config.mts"]
 }

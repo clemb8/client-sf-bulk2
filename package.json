@@ -18,10 +18,11 @@
     "build": "tsc",
     "test": "vitest run",
     "postversion": "git push && git push --tags",
-    "lint": "eslint src test vitest.config.mts",
+    "lint": "eslint src test e2e vitest.config.mts vitest.e2e.config.mts",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "typecheck": "tsc --noEmit -p tsconfig.eslint.json"
+    "typecheck": "tsc --noEmit -p tsconfig.eslint.json",
+    "test:e2e": "vitest run --config vitest.e2e.config.mts"
   },
   "author": "clemb8",
   "license": "MIT",
