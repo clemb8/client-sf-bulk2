@@ -1,5 +1,59 @@
 ## Change Log
 
+> Hand-maintained from 0.9.0 onward. Every entry from `0.8.1` down was generated
+> by `github-changes`, which was removed in the release-hardening work: it ran
+> unpinned through `npx`, appeared in neither `devDependencies` nor
+> `package-lock.json` (so `npm audit` could not see it), has been unmaintained
+> since 2022, and executed during `npm version` on the machine holding publish
+> credentials. Commits follow Conventional Commits from that point, so a pinned
+> generator can be reintroduced later if wanted.
+
+### 0.9.0 (2026-09-11)
+
+- **fix**: `getFinalBulkState` had no rejection path. A failure mid-poll became
+  an unhandled rejection, the polling interval was never cleared, and the
+  awaiting call never settled. Affected `waitQueryEnd`, `waitJobEnd`,
+  `getQueryFinalResults`, `submitAndGetQueryResults` and `createAndWaitJobResult`.
+- **fix**: `getFileBody` rejected with a plain string; it now rejects with an
+  `Error`, so consumers keep a stack. Message text unchanged.
+- **fix**: `requestGetAllQueryJobInfo` and `requestGetQueryResults` mutated the
+  caller-owned `RequestConfig`. Both now build a local endpoint.
+- **fix**: `engines.node` declared the exact, end-of-life `17.1`; it now declares
+  `>=20.19.0`. The README advertised the same dead version.
+- **fix**: the README's documented error handler printed the raw axios error,
+  which carries `config.headers.Authorization` — a live Salesforce access token.
+- **chore**: `npm audit` 8 vulnerable packages to 0, production and development.
+  `axios` raised to `^1.20.0` (clears `axios`, `follow-redirects`, `form-data`);
+  `tslint` removed and `typedoc` upgraded (clears `diff`, `js-yaml`, `semver`,
+  `minimatch`, `brace-expansion`).
+- **chore**: packaging moved from an `.npmignore` denylist to a `files`
+  allowlist. The denylist was fail-open — because it existed, npm ignored
+  `.gitignore` entirely when packing, and it named none of the paths marked
+  secret or as data.
+- **chore**: `tslint` replaced by `eslint` + `typescript-eslint`
+  (`recommendedTypeChecked`, no relaxations for `src/`); TypeScript 4.7 to 6.0
+  and typedoc 0.23 to 0.28.
+- **chore**: `generate-changelog` removed. See the note above.
+- **fix**: the four programs under `examples/` printed the raw axios error
+  in their `catch` blocks, the same live-token disclosure as the README.
+- **chore**: the `types` field was not added, honouring the packaging
+  boundary. `dist/index.d.ts` sits beside `dist/index.js`, so TypeScript
+  resolves declarations from `main` by convention.
+- **test**: first test suite — Vitest + nock, 87 tests, 100% statements,
+  functions and lines, 90% branches, with an 80% floor enforced by
+  `npm run coverage`. `prepublishOnly` now runs typecheck, lint, test and build.
+- **test**: end-to-end suite against a real Salesforce org — 14 tests over
+  query, ingest and `MonitorJob`, opt-in via `npm run test:e2e` and excluded
+  from the published tarball. Skips when unconfigured, refuses a
+  production-looking host, tags every record it creates and deletes them
+  afterwards. Verified green against a developer-edition org.
+- **BREAKING (types only)**: three exported signatures narrowed to what the Bulk
+  API v2 actually returns — `BulkAPI.getQueryResults` and
+  `requestGetQueryResults` from `Promise<AxiosResponse>` to
+  `Promise<AxiosResponse<string>>`, and `getFileBody` from an implicit
+  `Promise<unknown>` to `Promise<string>`. Runtime output is unchanged; only a
+  consumer assigning `.data` to a non-string type is affected, at compile time.
+
 ### 0.8.1 (2025/08/21 08:34 +00:00)
 - [#9](https://github.com/clemb8/client-sf-bulk2/pull/9) Bump axios from 1.7.4 to 1.8.2 (@clemb8)
 - [#10](https://github.com/clemb8/client-sf-bulk2/pull/10) Bump form-data from 4.0.0 to 4.0.4 (@clemb8)
