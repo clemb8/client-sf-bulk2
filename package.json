@@ -41,7 +41,6 @@
   "engines": {
     "node": ">=20.19.0"
   },
-  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ]
