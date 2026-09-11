@@ -96,11 +96,20 @@ describeE2e("ingest against a real Salesforce org", () => {
   it(
     "surfaces per-row failures rather than throwing, when a row is invalid",
     async () => {
-      // A required field left empty is rejected per row, not per job: the job
-      // completes and the failure shows up in failedResults. This is the
-      // behaviour a consumer most needs to be able to rely on.
+      // A row Salesforce rejects is reported per row, not per job: the job
+      // reaches JobComplete and the failure appears in failedResults. That is
+      // the behaviour a consumer most needs to rely on — a partial failure must
+      // not present as a thrown error or a failed job.
+      //
+      // An over-length value is used rather than an empty required field: Bulk
+      // ingest drops a wholly empty row, so the first version of this test
+      // processed nothing and asserted nothing. Name is capped at 255.
       const { client, config, files } = ctx;
-      const path = files.write("insert-bad.csv", `"${config.labelField}"\n""\n`);
+      const tooLong = "x".repeat(300);
+      const path = files.write(
+        "insert-bad.csv",
+        `"${config.labelField}"\n"${tooLong}"\n`,
+      );
 
       const job = await client.createAndStartJob(
         { object: config.object, operation: "insert" },
@@ -112,9 +121,17 @@ describeE2e("ingest against a real Salesforce org", () => {
       const info = await client.getIngestJobInfo(job.id);
       created.push(...idsFromSuccessfulResults(await client.getJobSuccesfulResults(job.id)));
 
-      // Whichever way the org is configured, the counts must add up and the
-      // call must not have thrown.
-      expect(info.numberRecordsProcessed + info.numberRecordsFailed).toBeGreaterThan(0);
+      expect(info.numberRecordsFailed).toBeGreaterThan(0);
+      // numberRecordsProcessed counts rows ATTEMPTED, not rows that succeeded:
+      // a failed row is counted by both fields. Verified against a live org —
+      // one over-length row gives processed 1, failed 1. Asserting processed
+      // was 0 here encoded the wrong model of the API.
+      expect(info.numberRecordsProcessed).toBeGreaterThanOrEqual(info.numberRecordsFailed);
+
+      const failures = parseCsv(await client.getJobFailedResults(job.id));
+      expect(failures).toHaveLength(info.numberRecordsFailed);
+      // The error text is Salesforce's, not ours; assert only that one arrived.
+      expect(Object.keys(failures[0] ?? {}).join(",")).toContain("sf__Error");
     },
     240000,
   );

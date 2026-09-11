@@ -65,11 +65,33 @@ describeE2e("query against a real Salesforce org", () => {
       const state = await client.waitQueryEnd(job.id, config.pollDelayMs);
       expect(state).toBe("JobComplete");
 
-      const csv = await client.getAllQueryResults(job.id, 10);
-      const rows = parseCsv(csv);
-      // The header must appear exactly once: later pages have theirs stripped.
-      expect(csv.split("\n").filter((line) => line.startsWith("Id")).length).toBe(1);
+      // maxRecords of 1 forces a page per row, so pagination engages whenever
+      // the org holds at least two records. An earlier version used 10 and
+      // quietly exercised nothing on a small org.
+      const paginated = await client.getAllQueryResults(job.id, 1);
+      const single = await client.getAllQueryResults(job.id);
+
+      // The strong property, and the one the defect would break: paging through
+      // must produce exactly what one unpaginated fetch produces. Stacked
+      // locators (...?locator=A?locator=B) either error or drop rows.
+      expect(parseCsv(paginated)).toEqual(parseCsv(single));
+
+      // The header must survive exactly once: later pages have theirs stripped.
+      // Salesforce quotes it, so compare on the unquoted value rather than a
+      // prefix — `startsWith("Id")` matches nothing against `"Id"`.
+      const headerRows = paginated
+        .split("\n")
+        .filter((line) => line.replace(/"/g, "").trim() === "Id");
+      expect(headerRows).toHaveLength(1);
+
+      const rows = parseCsv(paginated);
       expect(rows.every((row) => (row.Id ?? "").length > 0)).toBe(true);
+      if (rows.length < 2) {
+        console.warn(
+          `[e2e] only ${String(rows.length)} ${config.object} record(s) in this org, ` +
+            "so pagination was not exercised. Add records to make this test meaningful.",
+        );
+      }
     },
     300000,
   );
