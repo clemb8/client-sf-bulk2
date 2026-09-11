@@ -28,8 +28,10 @@ async function submitBulkQueryJob() {
     //In Case of a big query you may want to retrieve by chunk (here by chunk of 200 records)
     const prudentResults = await bulkAPI.getAllQueryResults(response.id, 200);
     console.log(prudentResults)
-  } catch (ex: any) {
-    console.log(ex);
+  } catch (ex) {
+    // Do not log the raw axios error: it carries config.headers.Authorization,
+    // which is your live Salesforce access token.
+    console.log(ex instanceof Error ? ex.message : ex);
   }
 }
 

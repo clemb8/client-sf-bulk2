@@ -17,8 +17,10 @@ async function importData() {
     };
     const response = await bulkAPI.createAndWaitJobResult(jobRequest, './accounts.csv');
     console.log(response);
-  } catch (ex: any) {
-    console.log(ex);
+  } catch (ex) {
+    // Do not log the raw axios error: it carries config.headers.Authorization,
+    // which is your live Salesforce access token.
+    console.log(ex instanceof Error ? ex.message : ex);
   }
 }
 

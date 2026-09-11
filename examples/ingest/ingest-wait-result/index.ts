@@ -45,8 +45,10 @@ async function importData() {
       console.log(successfulRecords);
       console.log(failedRecords);
     }
-  } catch (ex: any) {
-    console.log(ex);
+  } catch (ex) {
+    // Do not log the raw axios error: it carries config.headers.Authorization,
+    // which is your live Salesforce access token.
+    console.log(ex instanceof Error ? ex.message : ex);
   }
 }
 
