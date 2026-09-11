@@ -12,6 +12,9 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["e2e/**/*.e2e.ts"],
+    // Runs before each test file is imported. helpers/suite.ts resolves the
+    // configuration at import time, so a globalSetup would be too late.
+    setupFiles: ["e2e/helpers/load-env.ts"],
     // Bulk jobs are queued server-side; a single test can legitimately wait
     // minutes. Each test also sets its own timeout.
     testTimeout: 300000,

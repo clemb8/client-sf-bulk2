@@ -83,8 +83,40 @@ export function looksLikeProduction(instanceUrl: string): boolean {
       throw new Error(`SF_INSTANCE_URL is not a valid URL: "${instanceUrl}".`);
     }
   })();
-  const sandboxMarkers = ["--", ".sandbox.", ".scratch.", ".develop.", ".cs"];
-  return !sandboxMarkers.some((marker) => host.includes(marker));
+  const nonProductionMarkers = [
+    "--",              // sandbox My Domain, e.g. acme--dev.sandbox.my.salesforce.com
+    ".sandbox.",
+    ".scratch.",
+    ".develop.",
+    ".cs",             // legacy sandbox instance
+    "-dev-ed.",        // developer edition, including Trailhead playgrounds
+    ".trailblaze.",    // Trailhead playground
+    "localhost",
+  ];
+  return !nonProductionMarkers.some((marker) => host.includes(marker));
+}
+
+/**
+ * Reject the Lightning UI domain.
+ *
+ * `*.lightning.force.com` serves the web UI; the REST and Bulk APIs live on the
+ * org's `*.my.salesforce.com` domain. Pointing a client at the former produces
+ * redirects and HTML error pages rather than a clean failure, which is a
+ * miserable thing to debug — so it is caught here with the correction spelled
+ * out.
+ */
+export function assertApiHost(instanceUrl: string): void {
+  const host = new URL(instanceUrl).hostname.toLowerCase();
+  if (!host.endsWith(".lightning.force.com")) return;
+  const suggestion = `https://${host.replace(/\.lightning\.force\.com$/, ".my.salesforce.com")}`;
+  throw new Error(
+    `SF_INSTANCE_URL points at the Lightning UI domain ("${host}"). The REST and ` +
+      "Bulk APIs are served from the org's My Domain instead, and a client aimed " +
+      "at the UI host gets redirects and HTML rather than JSON. Use:\n\n" +
+      `  SF_INSTANCE_URL=${suggestion}\n\n` +
+      "Confirm the exact value with `sf org display --target-org <alias>` and read " +
+      'it from the "Instance Url" field.',
+  );
 }
 
 /**
@@ -135,6 +167,8 @@ export function resolveE2eConfig(): E2eConfig | E2eSkip {
     );
   }
 
+  assertApiHost(instanceUrl);
+
   const allowNonSandbox = readBool("SF_E2E_ALLOW_NON_SANDBOX", false);
   if (!allowNonSandbox && looksLikeProduction(instanceUrl)) {
     throw new Error(
@@ -152,7 +186,7 @@ export function resolveE2eConfig(): E2eConfig | E2eSkip {
   return {
     mode,
     instanceUrl,
-    apiVersion: read("SF_API_VERSION") ?? "59.0",
+    apiVersion: read("SF_API_VERSION") ?? "64.0",
     ...(accessToken === undefined ? {} : { accessToken }),
     ...(hasClientCredentials ? { clientId, clientSecret } : {}),
     loginUrl: read("SF_LOGIN_URL") ?? instanceUrl,
