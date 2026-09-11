@@ -1,6 +1,6 @@
 ## Change Log
 
-> Hand-maintained from 0.8.2 onward. Every entry from `0.8.1` down was generated
+> Hand-maintained from 0.9.0 onward. Every entry from `0.8.1` down was generated
 > by `github-changes`, which was removed in the release-hardening work: it ran
 > unpinned through `npx`, appeared in neither `devDependencies` nor
 > `package-lock.json` (so `npm audit` could not see it), has been unmaintained
@@ -8,7 +8,7 @@
 > credentials. Commits follow Conventional Commits from that point, so a pinned
 > generator can be reintroduced later if wanted.
 
-### Unreleased
+### 0.9.0 (2026-09-11)
 
 - **fix**: `getFinalBulkState` had no rejection path. A failure mid-poll became
   an unhandled rejection, the polling interval was never cleared, and the
@@ -34,9 +34,19 @@
   (`recommendedTypeChecked`, no relaxations for `src/`); TypeScript 4.7 to 6.0
   and typedoc 0.23 to 0.28.
 - **chore**: `generate-changelog` removed. See the note above.
+- **fix**: the four programs under `examples/` printed the raw axios error
+  in their `catch` blocks, the same live-token disclosure as the README.
+- **chore**: the `types` field was not added, honouring the packaging
+  boundary. `dist/index.d.ts` sits beside `dist/index.js`, so TypeScript
+  resolves declarations from `main` by convention.
 - **test**: first test suite — Vitest + nock, 87 tests, 100% statements,
   functions and lines, 90% branches, with an 80% floor enforced by
   `npm run coverage`. `prepublishOnly` now runs typecheck, lint, test and build.
+- **test**: end-to-end suite against a real Salesforce org — 14 tests over
+  query, ingest and `MonitorJob`, opt-in via `npm run test:e2e` and excluded
+  from the published tarball. Skips when unconfigured, refuses a
+  production-looking host, tags every record it creates and deletes them
+  afterwards. Verified green against a developer-edition org.
 - **BREAKING (types only)**: three exported signatures narrowed to what the Bulk
   API v2 actually returns — `BulkAPI.getQueryResults` and
   `requestGetQueryResults` from `Promise<AxiosResponse>` to
