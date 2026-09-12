@@ -1,16 +1,35 @@
 {
   "name": "client-sf-bulk2",
   "version": "0.9.0",
-  "description": "A client for the Salesforce bulk API V2",
+  "description": "Typed Salesforce Bulk API 2.0 client for Node.js — SOQL query and CSV ingest jobs in one line, with job-monitoring events.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "homepage": "https://github.com/clemb8/client-sf-bulk2#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/clemb8/client-sf-bulk2"
+    "url": "git+https://github.com/clemb8/client-sf-bulk2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/clemb8/client-sf-bulk2/issues"
   },
   "keywords": [
     "salesforce",
-    "bulkAPI",
-    "salesforce-api"
+    "salesforce-api",
+    "salesforce-bulk",
+    "bulk-api",
+    "bulk-api-2.0",
+    "bulk2",
+    "sfdc",
+    "soql",
+    "csv",
+    "etl",
+    "data-loader",
+    "data-migration",
+    "ingest",
+    "upsert",
+    "typescript",
+    "nodejs",
+    "jsforce"
   ],
   "scripts": {
     "prepare": "npm run build",
@@ -22,6 +41,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit -p tsconfig.eslint.json",
+    "docs": "typedoc src/index.ts",
     "test:e2e": "vitest run --config vitest.e2e.config.mts"
   },
   "author": "clemb8",
@@ -43,6 +63,7 @@
     "node": ">=20.19.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "llms.txt"
   ]
 }
