@@ -1,174 +1,243 @@
 # client-sf-bulk2
 
-This is a sample client for the Salesforce Bulk API with some abstraction facilitating short implementations. It can be used in JS/TS scripts or in Node Project.
+**Typed Salesforce Bulk API 2.0 client for Node.js.** Run a SOQL query or a CSV
+ingest job in one line, and follow long-running jobs with an event emitter —
+without hand-rolling the create / upload / start / poll / paginate dance.
 
-## Table of Contents
+[![npm version](https://img.shields.io/npm/v/client-sf-bulk2.svg)](https://www.npmjs.com/package/client-sf-bulk2)
+[![downloads](https://img.shields.io/npm/dm/client-sf-bulk2.svg)](https://www.npmjs.com/package/client-sf-bulk2)
+[![types](https://img.shields.io/npm/types/client-sf-bulk2.svg)](https://www.npmjs.com/package/client-sf-bulk2)
+[![license](https://img.shields.io/npm/l/client-sf-bulk2.svg)](./License.txt)
 
-- [General Info](#general-information)
-- [Technologies Used](#technologies-used)
-- [Features](#features)
-- [Usage](#usage)
-- [Project Status](#project-status)
-- [Acknowledgements](#acknowledgements)
+## Install
 
-## General Information
+```bash
+npm install client-sf-bulk2
+```
 
-This project aims to provide :
-- An easy to use client to query and import data via the Salesforce Bulk API ;
-- Some abstractions on top of the Salesforce Bulk API (ex: query in one line) ;
+TypeScript declarations are bundled — no `@types/` package needed.
 
-## Technologies Used
+## Quick start
 
-- Node.js - 20.19 or later
-
-## Features
-
-List the ready features here:
-
-- Easily query your Salesforce organization for data with the Salesforce Bulk API ;
-- Easily import data in your Salesforce organization with the Salesforce Bulk API ;
-
-## Usage
-
-Check the Salesforce documentation [here](https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/bulk_api_2_0.htm).
-Or use the one line implementation for query data :
+Export a full Salesforce object to CSV in one call:
 
 ```typescript
-import jsforce from 'jsforce';
 import { BulkAPI, Parameters, QueryInput } from 'client-sf-bulk2';
 
-async function submitBulkQueryJob() {
+const parameters: Parameters = {
+  accessToken: '<your access token>',
+  apiVersion: '55.0',
+  instanceUrl: 'https://your-org.my.salesforce.com',
+};
 
-  const conn = new jsforce.Connection({});
-  await conn.login(process.env.USERNAME!, process.env.PASSWORD!);
+const bulkAPI = new BulkAPI(parameters);
 
-  const bulkParameters: Parameters = {
-    accessToken: conn.accessToken,
-    apiVersion: '55.0',
-    instanceUrl: conn.instanceUrl
-  };
+const queryInput: QueryInput = {
+  operation: 'query',
+  query: 'SELECT Id, Name FROM Account',
+};
 
-  try {
-    const bulkAPI = new BulkAPI(bulkParameters);
-    const queryInput: QueryInput = {
-      query: 'Select Id, Name from Account',
-      operation: 'query'
-    };
-
-    const response = await bulkAPI.submitAndGetQueryResults(queryInput, 10);
-    console.log(response);
-  } catch (ex) {
-    // Do not log the raw axios error: it carries config.headers.Authorization,
-    // which is your live Salesforce access token.
-    console.log(ex instanceof Error ? ex.message : ex);
-  }
-}
-
-submitBulkQueryJob();
-
+// Submits the job, waits for it to finish, follows every locator page,
+// and returns the whole result set as CSV.
+const csv = await bulkAPI.submitAndGetQueryResults(queryInput, 10000);
 ```
 
-For import data :
+And insert a CSV file in one call:
 
 ```typescript
+import { BulkAPI, JobUploadRequest } from 'client-sf-bulk2';
+
+const jobRequest: JobUploadRequest = { object: 'Account', operation: 'insert' };
+
+// Creates the job, uploads the file, starts it, waits for completion.
+const jobInfo = await bulkAPI.createAndWaitJobResult(jobRequest, './accounts.csv');
+console.log(jobInfo.numberRecordsProcessed, jobInfo.numberRecordsFailed);
+```
+
+## Why this library
+
+Salesforce's Bulk API 2.0 is a multi-step protocol: create a job, upload the
+data, start it, poll until it leaves `InProgress`, then walk `Sforce-Locator`
+pages to collect results. Doing that by hand is where most of the code goes.
+
+- **One-line happy paths.** `submitAndGetQueryResults` and
+  `createAndWaitJobResult` collapse the whole sequence into a single `await`.
+- **Pagination handled.** `getAllQueryResults` follows `Sforce-Locator` until
+  exhausted and stitches the CSV, stripping repeated headers.
+- **Job monitoring built in.** Subscribe to `MonitorJob` for state on every
+  poll instead of writing your own loop.
+- **Typed end to end.** Every request and response shape is an exported
+  interface; `strict` TypeScript throughout.
+- **Small surface.** One runtime dependency (`axios`).
+
+It is not an ORM and it does not do authentication — bring your own token (see
+below). If you need the full Salesforce API surface, use `jsforce`; if you need
+Bulk 2.0 specifically and want it terse, use this.
+
+## Authenticating
+
+This library takes an access token; it does not obtain one. Any Salesforce auth
+flow works. Two common options:
+
+```typescript
+// With jsforce
 import jsforce from 'jsforce';
-import { BulkAPI, Parameters, JobUploadRequest } from 'client-sf-bulk2';
 
-async function importData() {
-  const conn = new jsforce.Connection({});
-  await conn.login(process.env.USERNAME!, process.env.PASSWORD!);
-  const bulkParameters: Parameters = {
-    accessToken: conn.accessToken,
-    apiVersion: '55.0',
-    instanceUrl: conn.instanceUrl
-  };
-  try {
-    const bulkAPI = new BulkAPI(bulkParameters);
-    const jobRequest: JobUploadRequest = {
-      'object': 'Account',
-      'operation': 'insert'
-    };
-    const response = await bulkAPI.createAndWaitJobResult(jobRequest, './account.csv');
-    console.log(response);
-  } catch (ex) {
-    // Do not log the raw axios error: it carries config.headers.Authorization,
-    // which is your live Salesforce access token.
-    console.log(ex instanceof Error ? ex.message : ex);
-  }
-}
+const conn = new jsforce.Connection({});
+await conn.login(process.env.SF_USERNAME!, process.env.SF_PASSWORD!);
 
-importData();
-
-
+const bulkAPI = new BulkAPI({
+  accessToken: conn.accessToken,
+  apiVersion: '55.0',
+  instanceUrl: conn.instanceUrl,
+});
 ```
 
-You can import nd use the MonitorJob Event Emitter to monitor the current job :
+```typescript
+// With client-sf-oauth (username-password flow)
+import { SF_PassConnect } from 'client-sf-oauth';
 
-``` typescript
+const connection = new SF_PassConnect({
+  clientId: process.env.SF_CLIENT_ID!,
+  clientSecret: process.env.SF_CLIENT_SECRET!,
+  username: process.env.SF_USERNAME!,
+  password: process.env.SF_PASSWORD!,
+  usertoken: process.env.SF_USER_TOKEN!,
+  host: process.env.SF_HOST!,
+});
 
-import { SF_PassConnect, PassParameters } from 'client-sf-oauth';
-import { BulkAPI, Parameters, JobUploadRequest, MonitorJob } from 'client-sf-bulk2';
+const result = await connection.requestAccessToken();
 
-async function importData() {
+const bulkAPI = new BulkAPI({
+  accessToken: result.data.access_token,
+  apiVersion: '55.0',
+  instanceUrl: result.data.instance_url,
+});
+```
 
-  const PassParameters: PassParameters = {
-    clientId: process.env.clientId!,
-    clientSecret: process.env.secret!,
-    username: process.env.username!,
-    password: process.env.password!,
-    usertoken: process.env.usertoken!,
-    host: process.env.host!
-  };
+Set `isTooling: true` in `Parameters` to target the Tooling API instead.
 
-  const connection = new SF_PassConnect(PassParameters);
+## Error handling
 
-  try {
+Errors are not caught for you — axios rejections propagate unchanged, so you
+wrap calls yourself.
 
-    const result = await connection.requestAccessToken();
+> **Never log a raw axios error.** It carries
+> `error.config.headers.Authorization`, which is your live Salesforce access
+> token. Log `error.message`, or redact before logging.
 
-    const bulkParameters: Parameters = {
-      accessToken: result.data.access_token,
-      apiVersion: '55.0',
-      instanceUrl: result.data.instance_url
-    };
+```typescript
+try {
+  const csv = await bulkAPI.submitAndGetQueryResults(queryInput);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error);
+}
+```
 
-    const bulkAPI = new BulkAPI(bulkParameters);
-    const jobRequest: JobUploadRequest = {
-      'object': 'Account',
-      'operation': 'insert'
-    };
-    const response = await bulkAPI.createAndStartJob(jobRequest, './accounts.csv');
-    console.log(response);
+## Monitoring a long-running job
 
-    // Use the MonitorJob Event Emitter to get the status of the job
-    MonitorJob.on('monitoring', (state: any) => {
-      //Do something with the job state
-      console.log(state);
-    });
+`MonitorJob` is a module-level `EventEmitter` shared by every `BulkAPI`
+instance in the process. It emits `monitoring` on each poll while
+`waitJobEnd` or `waitQueryEnd` is running.
 
-    const finalStateJob = await bulkAPI.waitJobEnd(response.id);
+```typescript
+import { BulkAPI, MonitorJob, JobUploadRequest } from 'client-sf-bulk2';
 
-    if(finalStateJob === 'JobComplete') {
-      const successfulRecords = await bulkAPI.getJobSuccesfulResults(response.id);
-      const failedRecords = await bulkAPI.getJobFailedResults(response.id);
-      console.log(successfulRecords);
-      console.log(failedRecords);
-    }
-  } catch (ex) {
-    // Do not log the raw axios error: it carries config.headers.Authorization,
-    // which is your live Salesforce access token.
-    console.log(ex instanceof Error ? ex.message : ex);
-  }
+MonitorJob.on('monitoring', (state) => console.log('job state:', state));
+
+const jobRequest: JobUploadRequest = { object: 'Account', operation: 'insert' };
+const job = await bulkAPI.createAndStartJob(jobRequest, './accounts.csv');
+
+if (await bulkAPI.waitJobEnd(job.id) === 'JobComplete') {
+  const succeeded = await bulkAPI.getJobSuccesfulResults(job.id);
+  const failed = await bulkAPI.getJobFailedResults(job.id);
+}
+```
+
+## API reference
+
+Construct with `new BulkAPI(parameters: Parameters)`.
+
+### Query jobs
+
+| Method | Returns | Description |
+| --- | --- | --- |
+| `submitQueryJob(query)` | `QueryResponse` | Submit a SOQL query job. |
+| `getQueryJob(jobId)` | `QueryResponse` | Current state of one query job. |
+| `getAllQueryJobInfo(config?)` | `AllQueryJobsInfoResponse` | List query jobs in the org. |
+| `abortQueryJob(jobId)` | `QueryResponse` | Abort a running query job. |
+| `getQueryResults(jobId, maxRecords?, locator?)` | `AxiosResponse<string>` | One page of CSV results, headers included. |
+| `getAllQueryResults(jobId, maxRecords?)` | `string` | Every page, concatenated. |
+| `waitQueryEnd(jobId, delay?)` | `string` | Poll until the job reaches a final state. Default delay 3000 ms. |
+| `getQueryFinalResults(jobId, maxRecordsByRequest?)` | `string` | Wait, then fetch all results. Default 200 per request. |
+| `submitAndGetQueryResults(query, maxRecordsByRequest?)` | `string` | Submit, wait, and fetch all results. |
+
+### Ingest jobs
+
+| Method | Returns | Description |
+| --- | --- | --- |
+| `createDataUploadJob(request)` | `JobUploadResponse` | Create an ingest job. |
+| `uploadJobData(jobId, filename)` | `number` | Upload a CSV file; resolves to the HTTP status. |
+| `startJob(jobId)` | `JobUploadResponse` | Move the job to `UploadComplete`. |
+| `createAndStartJob(request, filename)` | `JobUploadResponse` | Create, upload, and start. |
+| `abortJob(jobId)` | `JobUploadResponse` | Abort a running ingest job. |
+| `getIngestJobInfo(jobId)` | `JobInfoResponse` | Job state plus processing counters. |
+| `waitJobEnd(jobId, delay?)` | `string` | Poll until the job reaches a final state. Default delay 3000 ms. |
+| `createAndWaitJobResult(request, filename)` | `JobInfoResponse` | Create, upload, start, and wait. |
+| `getJobSuccesfulResults(jobId)` | `string` | CSV of records that succeeded. |
+| `getJobFailedResults(jobId)` | `string` | CSV of records that failed. |
+| `getJobUnprocessedResults(jobId)` | `string` | CSV of records never processed. |
+
+### Exported types
+
+`Parameters`, `QueryInput`, `QueryConfig`, `QueryResponse`,
+`AllQueryJobsInfoResponse`, `JobUploadRequest`, `JobUploadResponse`,
+`JobInfoResponse`, and the `MonitorJob` emitter.
+
+Key shapes:
+
+```typescript
+interface Parameters {
+  accessToken: string;
+  apiVersion: string;   // e.g. '55.0'
+  instanceUrl: string;
+  isTooling?: boolean;
 }
 
-importData();
+interface QueryInput {
+  operation: string;    // 'query' | 'queryAll'
+  query: string;
+  contentType?: string;
+  columnDelimiter?: string;
+  lineEnding?: string;
+}
 
+interface JobUploadRequest {
+  object: string;       // e.g. 'Account'
+  operation: string;    // 'insert' | 'update' | 'upsert' | 'delete' | 'hardDelete'
+  externalIdFieldName?: string;   // required for 'upsert'
+  assignmentRuleId?: string;
+  columnDelimiter?: string;
+  contentType?: string;
+  lineEnding?: string;
+}
 ```
-## Project Status
 
-Project is: _in progress_.
+## Requirements
 
+- Node.js >= 20.19.0
+- A Salesforce access token and instance URL
+
+## Reference
+
+- [Salesforce Bulk API 2.0 documentation](https://developer.salesforce.com/docs/atlas.en-us.api_asynch.meta/api_asynch/bulk_api_2_0.htm)
+- [Changelog](./CHANGELOG.md)
+- [Issues](https://github.com/clemb8/client-sf-bulk2/issues)
 
 ## Acknowledgements
 
-- This project was inspired by https://github.com/msrivastav13/node-sf-bulk2#node-sf-bulk2 ;
+Inspired by [node-sf-bulk2](https://github.com/msrivastav13/node-sf-bulk2).
+
+## License
+
+MIT
