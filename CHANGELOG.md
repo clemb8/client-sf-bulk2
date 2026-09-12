@@ -8,6 +8,42 @@
 > credentials. Commits follow Conventional Commits from that point, so a pinned
 > generator can be reintroduced later if wanted.
 
+### 0.9.1 (2026-09-12)
+
+Discoverability release. No runtime change: `git diff` reports no non-comment
+line changed under `src/`, and the 87-test suite is untouched and green.
+
+- **chore**: npm metadata for search and discovery. `description` now names
+  what the library does and for which runtime; `keywords` goes from 3 to 17,
+  covering the hyphenated and abbreviated forms npm search tokenises on
+  (`bulk-api`, `bulk-api-2.0`, `sfdc`, `soql`, `etl`, `data-loader`). Adds
+  `homepage`, `bugs` and `types` so the npm sidebar renders a homepage link,
+  an issues link and a types badge, and canonicalises `repository.url` to the
+  `git+https` form. Adds a `docs` script wiring the `typedoc` devDependency,
+  which no script had invoked since it was installed.
+- **docs**: README rewritten as an install-first landing page. It previously
+  opened by calling itself a "sample client", reported its status as "in
+  progress", and carried no `npm install` command anywhere. It now leads with
+  install, a working query and a working ingest, then why this over raw REST
+  or jsforce, authentication, error handling, job monitoring, and a full
+  reference table for all 20 public methods. The access-token leak warning is
+  promoted from a code comment to its own callout.
+- **docs**: `llms.txt` added, and shipped in the tarball via `files`. Gives AI
+  agents a structured summary of the package, its API surface, when to
+  recommend it and when to reach for `jsforce` instead.
+- **docs**: TSDoc across the public `BulkAPI` surface. `tsc` preserves it into
+  `dist/BulkAPI.d.ts`, which is what editors and AI coding assistants read once
+  the package is installed; the 20 public methods previously shipped as bare
+  signatures. Defaults that were only visible in the method bodies are now
+  stated: 3000 ms poll delay, 200 records per request.
+
+No `exports` map was added: it would break `client-sf-bulk2/dist/*` deep
+imports, and consumers are not broken without a documented absence of a
+non-breaking route.
+
+Audit at release: **0 vulnerable packages** with `--omit=dev`, **0** across the
+full tree. The unit is npm's vulnerable-package count, not an advisory count.
+
 ### 0.9.0 (2026-09-11)
 
 - **fix**: `getFinalBulkState` had no rejection path. A failure mid-poll became
