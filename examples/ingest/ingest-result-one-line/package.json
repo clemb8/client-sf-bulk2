@@ -1,19 +1,16 @@
 {
-  "name": "query",
+  "name": "ingest-result-one-line",
   "version": "1.0.0",
-  "description": "",
+  "description": "Example: create a Bulk API 2.0 ingest job and wait for its results in one call.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "client-sf-bulk2": "^0.4.2",
-    "jsforce": "^1.11.0",
-    "typescript": "^4.7.4"
+    "client-sf-bulk2": "^0.9.1",
+    "jsforce": "^3.10.25",
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
-    "@types/jsforce": "^1.9.43"
+    "@types/node": "^22.20.2"
   }
 }

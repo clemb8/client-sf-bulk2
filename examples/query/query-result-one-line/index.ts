@@ -5,7 +5,7 @@ async function submitBulkQueryJob() {
   const conn = new jsforce.Connection({});
   await conn.login(process.env.USERNAME!, process.env.PASSWORD!);
   const bulkParameters: Parameters = {
-    accessToken: conn.accessToken,
+    accessToken: conn.accessToken!,
     apiVersion: '55.0',
     instanceUrl: conn.instanceUrl
   };
